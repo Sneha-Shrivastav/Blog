@@ -12,19 +12,19 @@ router.get("/test-me", function (req, res) {
 router.post("/create", authorController.createAuthor)
 
 
-router.post("/createBlog",Middleware.authentication,Middleware.authorise, blogController.create)
+router.post("/createBlog",Middleware.authentication, blogController.create)
 
 
 router.put("/update/:blogId" ,Middleware.authentication,Middleware.authorise, blogController.updateBlog)
 
 
-router.delete("/deleteByQuery",Middleware.authentication,Middleware.authorise, blogController.deleteByQuery)
+router.delete("/deleteByQuery",Middleware.authentication, blogController.deleteByQuery)
 
 
 router.delete("/blog/:blogId",Middleware.authentication,Middleware.authorise, blogController.deleteBlog)
 
 
-router.get("/getBlogs" ,Middleware.authentication,Middleware.authorise, blogController.getBlogs)
+router.get("/getBlogs" ,Middleware.authentication, blogController.getBlogs)
 
 router.post("/authorLogin",authorController.authorLogin)
 

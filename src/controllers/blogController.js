@@ -31,7 +31,7 @@ const getBlogs = async function (req, res) {
         const data = req.query
         if (!data) return res.status(400).send({ error: "Enter some for the filter data" })
 
-        const blogs = await blogModel.find(data, { isDeleted: false }, { isPublished: true }).populate("authorId")
+        const blogs = await blogModel.find(data).find ({ isDeleted: false ,  isPublished: true }).populate("authorId")
 
         if (!blogs) return res.status(404).send({ error: "No such data found" })
 

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const blogModel = require("../models/blogModel");
 
 let authentication = function (req, res, next) {
   try {
@@ -18,14 +19,14 @@ let authentication = function (req, res, next) {
   next()
 }
 
-const authorise = function (req, res, next) {
+const authorise = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
     let decodedToken = jwt.verify(token, "Project-1");
-    let userLoggingIn = req.query.authorId
+    let userLoggingIn = req.params.blogId
     let userLoggedIn = decodedToken.authorId
-
-    if (userLoggedIn != userLoggingIn) return res.send({ status: false, msg: "You are not allowed to modify requested user's data" })
+let value = await blogModel.findById(userLoggingIn)
+    if (value.authorId != userLoggedIn) return res.send({ status: false, msg: "You are not allowed to modify requested user's data" })
   }
   catch (err) {
     console.log(err)
