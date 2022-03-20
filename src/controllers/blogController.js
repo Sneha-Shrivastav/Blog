@@ -5,17 +5,23 @@ const { months } = require("moment")
 
 const create = async function (req, res) {
     try {
-        const input = req.body
+        const data = req.body
 
         const id = req.body.authorId
 
-        if (!Object.keys(input).length > 0) return res.send("Please enter blogData")
+        if (!Object.keys(data).length > 0) return res.send("Please enter blogData")
+        if (!data.title) return res.status(400).send({ error: "Please enter title" })
+        if (!data.body) return res.status(400).send({ error: "Please enter body" })
+        if (!data.authorId) return res.status(400).send({ error: "Please enter Author Id" })
+        if (!data.category) return res.status(400).send({ error: "Please enter Category" })
+
 
         const findAuthor = await authorModel.find({ _id: id })
 
         if (!findAuthor.length > 0) return res.status(400).send("authorId is not present")
 
-        const createdBlog = await blogModel.create(input)
+
+        const createdBlog = await blogModel.create(data)
 
         res.status(201).send({ createdBlog })
     }
@@ -31,7 +37,7 @@ const getBlogs = async function (req, res) {
         const data = req.query
         if (!data) return res.status(400).send({ error: "Enter some for the filter data" })
 
-        const blogs = await blogModel.find(data).find ({ isDeleted: false ,  isPublished: true }).populate("authorId")
+        const blogs = await blogModel.find(data).find({ isDeleted: false, isPublished: true }).populate("authorId")
 
         if (!blogs) return res.status(404).send({ error: "No such data found" })
 
@@ -84,6 +90,7 @@ const deleteBlog = async function (req, res) {
         if (!Id) return res.status(400).send({ error: "blogId should be present in params" });
 
         const data = await blogModel.find({ _id: Id })
+
 
 
         if (!data) return res.status(400).send({ error: "Invalid blogId" })
