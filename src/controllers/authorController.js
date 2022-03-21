@@ -11,7 +11,7 @@ const createAuthor = async function (req, res) {
         if(!data.lname) return res.status(400).send({error:"Please enter last name"})
         if(!data.title) return res.status(400).send({error:"Please enter title"})
         if(!data.email) return res.status(400).send({error:"Please enter email"})
-        if(!data.password) return res.status(400).send({error:"Please enter email"})
+        if(!data.password) return res.status(400).send({error:"Please enter password"})
         const createdauthor = await authorModel.create(data)
         res.status(201).send({ data: createdauthor })
     }
@@ -32,7 +32,7 @@ const authorLogin = async function (req, res) {
     if (!author.email)
         return res.status(400).send({
             status: false,
-            msg: "email passwordor the  is not corerct",
+            msg: "email password the  is not corerct",
         })
 
     let token = jwt.sign(
