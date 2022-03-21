@@ -25,7 +25,7 @@ const authorise = async function (req, res, next) {
     let decodedToken = jwt.verify(token, "Project-1");
     let userLoggingIn = req.params.blogId
     let userLoggedIn = decodedToken.authorId
-let value = await blogModel.findById(userLoggingIn)
+    let value = await blogModel.findById(userLoggingIn)
     if (value.authorId != userLoggedIn) return res.send({ status: false, msg: "You are not allowed to modify requested user's data" })
   }
   catch (err) {

@@ -60,10 +60,12 @@ const updateBlog = async function (req, res) {
             return
         }
 
-
         if (!data) {
             res.status(400).send("Enter data to update")
         }
+
+        if (!Object.keys(data).length > 0) return res.send({msg:"Please enter data for updation"})
+
 
         const time = moment()
 
@@ -91,11 +93,9 @@ const deleteBlog = async function (req, res) {
 
         const data = await blogModel.find({ _id: Id })
 
-
-
         if (!data) return res.status(400).send({ error: "Invalid blogId" })
 
-
+        
         const timeDate = moment()
 
         const dataforUpdation = { ...data, isDeleted: true, deletedAt: timeDate }

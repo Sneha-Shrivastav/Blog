@@ -1,17 +1,23 @@
 const jwt = require("jsonwebtoken");
-const authorModel = require("../models/authorModel")
+const authorModel = require("../models/authorModel");
+const blogModel = require("../models/blogModel");
 
 
 const createAuthor = async function (req, res) {
     try {
         const data = req.body
-
+        const email = data.email
         if (!Object.keys(data).length > 0) return res.status(400).send({ error: "Please enter data" })
         if(!data.fname) return res.status(400).send({error:"Please enter first name"})
         if(!data.lname) return res.status(400).send({error:"Please enter last name"})
         if(!data.title) return res.status(400).send({error:"Please enter title"})
-        if(!data.email) return res.status(400).send({error:"Please enter email"})
+        if(!email) return res.status(400).send({error:"Please enter email"})
         if(!data.password) return res.status(400).send({error:"Please enter password"})
+
+        const emailAlreadyUsed = await authorModel.findOne({email})
+
+        if(emailAlreadyUsed) return res.status(400).send({status: false, msg: "email already registered"})
+
         const createdauthor = await authorModel.create(data)
         res.status(201).send({ data: createdauthor })
     }
