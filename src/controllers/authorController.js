@@ -2,17 +2,36 @@ const jwt = require("jsonwebtoken");
 const authorModel = require("../models/authorModel");
 const blogModel = require("../models/blogModel");
 
+const isValid = function (value) {
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
+    return true;
+}
+
+let validateEmail = function (Email) {
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email);
+}
+
+const isValidTitle = (title) => {
+    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
+
+}
+
 
 const createAuthor = async function (req, res) {
     try {
         const data = req.body
-        const email = data.email
+
+        const {fname, lname, title, email, password} = data
+
         if (!Object.keys(data).length > 0) return res.status(400).send({ error: "Please enter data" })
-        if(!data.fname) return res.status(400).send({error:"Please enter first name"})
-        if(!data.lname) return res.status(400).send({error:"Please enter last name"})
-        if(!data.title) return res.status(400).send({error:"Please enter title"})
-        if(!email) return res.status(400).send({error:"Please enter email"})
-        if(!data.password) return res.status(400).send({error:"Please enter password"})
+        if(!isValid(fname)) return res.status(400).send({error:"Please enter first name"})
+        if(!isValid(lname)) return res.status(400).send({error:"Please enter last name"})
+        if(!isValid(title)) return res.status(400).send({error:"Please enter title"})
+        if(!isValidTitle(title)) return res.status(400).send({error:"title must be either ['Mr', 'Mrs', 'Miss']"})
+        if(!isValid(email)) return res.status(400).send({error:"Please enter email"})
+        if(!validateEmail(email)) return res.status(400).send({error: "Please enter a valid email" })
+        if(!isValid(password)) return res.status(400).send({error:"Please enter password"})
 
         const emailAlreadyUsed = await authorModel.findOne({email})
 
@@ -29,16 +48,18 @@ const createAuthor = async function (req, res) {
 
 const authorLogin = async function (req, res) {
     try {
-    let emailId = req.body.email;
-    let password = req.body.password;
+    const {email, password} = req.body
 
-    if (!Object.keys(emailId).length > 0) return res.status(400).send({ error: "Please enter email" })
-    if (!Object.keys(password).length > 0) return res.status(400).send({ error: "Please enter password" })
-    let author = await authorModel.findOne({ email: emailId, password: password });
-    if (!author.email)
+    if(!Object.keys(req.body).length > 0) return res.status(400).send({ error: "Please enter data" })
+
+    if (!isValid(email)) return res.status(400).send({ error: "Please enter email" })
+    if(!validateEmail(email)) return res.status(400).send({error: "Please enter a valid email" })
+    if (!isValid(password)) return res.status(400).send({ error: "Please enter password" })
+    let author = await authorModel.findOne({email: email, password: password });
+    if (!author)
         return res.status(400).send({
             status: false,
-            msg: "email password the  is not corerct",
+            msg: "email or password  is incorerct",
         })
 
     let token = jwt.sign(
